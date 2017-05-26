@@ -81,6 +81,16 @@ varying vec3 vDirectionW;
 
 #include<logDepthDeclaration>
 
+// highp float rand(vec2 co)
+// {
+//     highp float a = 12.9898;
+//     highp float b = 78.233;
+//     highp float c = 43758.5453;
+//     highp float dt= dot(co.xy ,vec2(a,b));
+//     highp float sn= mod(dt,3.14);
+//     return fract(sin(sn) * c);
+// }
+
 void main(void) {
 	vec3 positionUpdated = position;
 #ifdef NORMAL	
@@ -98,7 +108,6 @@ void main(void) {
 
 #include<instancesVertex>
 #include<bonesVertex>
-
 	gl_Position = viewProjection * finalWorld * vec4(positionUpdated, 1.0);
 
 	vec4 worldPos = finalWorld * vec4(positionUpdated, 1.0);
@@ -205,6 +214,31 @@ void main(void) {
 #ifdef VERTEXCOLOR
 	// Vertex color
 	vColor = color;
+
+	// vec3 dColors[24];
+
+	// dColors[0] = vec3(2.0/255.0, 64.0/255.0, 165.0/255.0);
+	// dColors[1] = vec3(125.0/255.0, 135.0/255.0, 185.0/255.0);
+	// dColors[2] = vec3(190.0/255.0,193.0/255.0,212.0/255.0);
+	// dColors[3] = vec3(214.0/255.0,188.0/255.0,192.0/255.0);
+	// dColors[4] = vec3(187.0/255.0,119.0/255.0,132.0/255.0);
+	// dColors[5] = vec3(142.0/255.0,6.0/255.0,59.0/255.0);
+	// dColors[6] = vec3(74.0/255.0,111.0/255.0,227.0/255.0);
+	// dColors[7] = vec3(133.0/255.0,149.0/255.0,225.0/255.0);
+	// dColors[8] = vec3(181.0/255.0,187.0/255.0,227.0/255.0);
+	// dColors[9] = vec3(230.0/255.0,175.0/255.0,185.0/255.0);
+	// dColors[10] = vec3(224.0/255.0,123.0/255.0,145.0/255.0);
+	// dColors[11] = vec3(211.0/255.0,63.0/255.0,106.0/255.0);
+	// dColors[12] = vec3(17.0/255.0,198.0/255.0,56.0/255.0);
+	// dColors[13] = vec3(141.0/255.0,213.0/255.0,147.0/255.0);
+	// dColors[14] = vec3(198.0/255.0,222.0/255.0,199.0/255.0);
+	// dColors[15] = vec3(234.0/255.0,211.0/255.0,198.0/255.0);
+	// dColors[16] = vec3(240.0/255.0,185.0/255.0,141.0/255.0);
+	// dColors[17] = vec3(239.0/255.0,151.0/255.0,8.0/255.0);
+	// dColors[18] = vec3(15.0/255.0,207.0/255.0,192.0/255.0);
+	// dColors[19] = vec3(156.0/255.0,222.0/255.0,214.0/255.0);
+	// dColors[20] = vec3(213.0/255.0,234.0/255.0,231.0/255.0);
+
 #endif
 
 #include<pointCloudVertex>

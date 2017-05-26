@@ -993,6 +993,8 @@
             var matricesCount = visibleInstances.length + 1;
             var bufferSize = matricesCount * 16 * 4;
 
+
+
             var currentInstancesBufferSize = this._instancesBufferSize;
             var instancesBuffer = this._instancesBuffer;
 
@@ -1010,6 +1012,7 @@
             var world = this.getWorldMatrix();
             if (batch.renderSelf[subMesh._id]) {
                 world.copyToArray(this._instancesData, offset);
+
                 offset += 16;
                 instancesCount++;
             }
@@ -1018,6 +1021,11 @@
                 for (var instanceIndex = 0; instanceIndex < visibleInstances.length; instanceIndex++) {
                     var instance = visibleInstances[instanceIndex];
                     instance.getWorldMatrix().copyToArray(this._instancesData, offset);
+
+                    // Replace the zeroes in the matrix with animation data ;)
+                    this._instancesData[offset+3] = instance._animationIndex;
+                    this._instancesData[offset+7] = instance._animationFrameOffset;
+
                     offset += 16;
                     instancesCount++;
                 }

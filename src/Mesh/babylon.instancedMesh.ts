@@ -7,6 +7,9 @@
         private _sourceMesh: Mesh;
         private _currentLOD: Mesh;
 
+        public _animationIndex;
+        public _animationFrameOffset;
+
         constructor(name: string, source: Mesh) {
             super(name, source.getScene());
 
@@ -28,6 +31,19 @@
 
             this.refreshBoundingInfo();
             this._syncSubMeshes();
+        }
+
+        public setupAnimation() : void {
+            if (Math.random() < 0.5) {
+                return;
+            }
+            
+            this._animationIndex = 0;
+            this._animationFrameOffset = Math.floor(Math.random() * 32);
+
+            this.getScene().registerBeforeRender(() => {
+                this._animationFrameOffset = (this._animationFrameOffset + 1) % 33;
+            });
         }
 
         /**
