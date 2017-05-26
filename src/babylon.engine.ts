@@ -2453,7 +2453,11 @@
             if (compression) {
                 this._gl.compressedTexImage2D(this._gl.TEXTURE_2D, 0, this.getCaps().s3tc[compression], texture._width, texture._height, 0, data);
             } else {
-                this._gl.texImage2D(this._gl.TEXTURE_2D, 0, internalFormat, texture._width, texture._height, 0, internalFormat, this._gl.UNSIGNED_BYTE, data);
+                if (texture.type === Engine.TEXTURETYPE_FLOAT) {
+                    this._gl.texImage2D(this._gl.TEXTURE_2D, 0, WebGL2RenderingContext.RGBA32F, texture._width, texture._height, 0, this._gl.RGBA, this._gl.FLOAT, data);
+                } else {
+                    this._gl.texImage2D(this._gl.TEXTURE_2D, 0, internalFormat, texture._width, texture._height, 0, internalFormat, this._gl.UNSIGNED_BYTE, data);
+                }
             }
 
             if (texture.generateMipMaps) {
@@ -2464,13 +2468,14 @@
             texture.isReady = true;
         }
 
-        public createRawTexture(data: ArrayBufferView, width: number, height: number, format: number, generateMipMaps: boolean, invertY: boolean, samplingMode: number, compression: string = null): WebGLTexture {
+        public createRawTexture(data: ArrayBufferView, width: number, height: number, format: number, generateMipMaps: boolean, invertY: boolean, samplingMode: number, compression: string = null, type: number = Engine.TEXTURETYPE_UNSIGNED_INT): WebGLTexture {
             var texture = this._gl.createTexture();
             texture._baseWidth = width;
             texture._baseHeight = height;
             texture._width = width;
             texture._height = height;
             texture.references = 1;
+            texture.type = type;
 
             this.updateRawTexture(texture, data, format, invertY, compression);
             this._bindTextureDirectly(this._gl.TEXTURE_2D, texture);

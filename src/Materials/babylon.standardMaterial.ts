@@ -31,6 +31,7 @@ module BABYLON {
         public NUM_BONE_INFLUENCERS = 0;
         public BonesPerMesh = 0;
         public INSTANCES = false;
+        public INSTANCED_SKINNING = false;
         public GLOSSINESS = false;
         public ROUGHNESS = false;
         public EMISSIVEASILLUMINATION = false;
@@ -128,6 +129,11 @@ module BABYLON {
         private _refractionTexture: BaseTexture;
         @expandToProperty("_markAllSubMeshesAsTexturesDirty")
         public refractionTexture: BaseTexture;   
+
+        @serializeAsTexture("instancedSkinningTexture")
+        private _instancedSkinningTexture: RawTexture;
+        @expandToProperty("_markAllSubMeshesAsTexturesDirty")
+        public instancedSkinningTexture: RawTexture;
 
         @serializeAsColor3("ambient")
         public ambientColor = new Color3(0, 0, 0);
@@ -469,6 +475,17 @@ module BABYLON {
                         defines.EMISSIVE = false;
                     }
 
+                    // TODO: if (this._instancedSkinningTexture && StandardMaterialInstancedSkinningEnabled)
+                    if (this._instancedSkinningTexture) {
+                        if (!this._instancedSkinningTexture.isReady()) {
+                            return false;
+                        } else {
+                            defines.INSTANCED_SKINNING = true;
+                        }
+                    } else {
+                        defines.INSTANCED_SKINNING = false;
+                    }
+
                     if (this._lightmapTexture && StandardMaterial.LightmapTextureEnabled) {
                         if (!this._lightmapTexture.isReady()) {
                             return false;
@@ -544,6 +561,7 @@ module BABYLON {
                     defines.BUMP = false;
                     defines.REFRACTION = false;
                     defines.CAMERACOLORGRADING = false;
+                    defines.INSTANCED_SKINNING = false;
                 }
 
                 defines.CAMERACOLORCURVES = (this._cameraColorCurves !== undefined && this._cameraColorCurves !== null);
@@ -705,7 +723,7 @@ module BABYLON {
                     "logarithmicDepthConstant"
                 ];
 
-                var samplers = ["diffuseSampler", "ambientSampler", "opacitySampler", "reflectionCubeSampler", "reflection2DSampler", "emissiveSampler", "specularSampler", "bumpSampler", "lightmapSampler", "refractionCubeSampler", "refraction2DSampler"]
+                var samplers = ["diffuseSampler", "ambientSampler", "opacitySampler", "reflectionCubeSampler", "reflection2DSampler", "emissiveSampler", "specularSampler", "bumpSampler", "lightmapSampler", "refractionCubeSampler", "refraction2DSampler", "instancedSkinningSampler"]
 
                 var uniformBuffers = ["Material", "Scene"];
 
@@ -950,6 +968,11 @@ module BABYLON {
                         effect.setTexture("emissiveSampler", this._emissiveTexture);
                     }
 
+                    // TODO: if (this._instancedSkinningTexture && StandardMaterial.IntanacedSkinningEnabled)
+                    if (this._instancedSkinningTexture) {
+                        effect.setTexture("instancedSkinningSampler", this._instancedSkinningTexture);
+                    }
+
                     if (this._lightmapTexture && StandardMaterial.LightmapTextureEnabled) {
                         effect.setTexture("lightmapSampler", this._lightmapTexture);
                     }
@@ -1085,6 +1108,10 @@ module BABYLON {
 
                 if (this._emissiveTexture) {
                     this._emissiveTexture.dispose();
+                }
+
+                if (this._instancedSkinningTexture) {
+                    this._instancedSkinningTexture.dispose();
                 }
 
                 if (this._specularTexture) {

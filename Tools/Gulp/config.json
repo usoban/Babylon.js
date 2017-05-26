@@ -895,7 +895,6 @@
         }
     ],
     "modules": [
-        "canvas2D",
         "materialsLibrary",
         "postProcessesLibrary",
         "proceduralTexturesLibrary",
