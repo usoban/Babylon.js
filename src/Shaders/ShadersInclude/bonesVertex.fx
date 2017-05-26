@@ -1,48 +1,46 @@
 ﻿#if NUM_BONE_INFLUENCERS > 0
+	mat4 influence;
 
-	// mat4 loadBoneMatrix(float animationFrameOffset, float bone) {
-	// 	uint baseIndex = animationFrameOffset*128;
+	#ifdef INSTANCED_SKINNING 
+		influence = loadBoneMatrix(animationFrameOffset, matricesIndices[0]) * matricesWeights[0];
 
-	// 	// baseIndex += 4*bone;
+		#if NUM_BONE_INFLUENCERS > 1
+			influence += loadBoneMatrix(animationFrameOffset, matricesIndices[1]) * matricesWeights[1];
+		#endif
 
-	// 	uint baseU = 4*int(bone);
-	// 	uint baseV = int(animationFrameOffset);
+		#if NUM_BONE_INFLUENCERS > 2
+			influence += loadBoneMatrix(animationFrameOffset, matricesIndices[2]) * matricesWeights[2];
+		#endif
 
-	// 	vec4 a = texture(emissiveSampler, vec2(baseU, baseV));
-	// 	vec4 b = texture(emissiveSampler, vec2(baseU+1, baseV));
-	// 	vec4 c = texture(emissiveSampler, vec2(baseU+2, baseV));
-	// 	vec4 d = texture(emissiveSampler, vec2(baseU+3, baseV));
+		#if NUM_BONE_INFLUENCERS > 3
+			influence += loadBoneMatrix(animationFrameOffset, matricesIndices[3]) * matricesWeights[3];
+		#endif
+	#else
+		influence = mBones[int(matricesIndices[0])] * matricesWeights[0];
 
-	// 	return mat4(vec4(0, 0, 0, 0), vec4(0, 0, 0, 0), vec4(0, 0, 0, 0), vec4(0, 0, 0, 0));
+		#if NUM_BONE_INFLUENCERS > 1
+			influence += mBones[int(matricesIndices[1])] * matricesWeights[1];
+		#endif	
+		#if NUM_BONE_INFLUENCERS > 2
+			influence += mBones[int(matricesIndices[2])] * matricesWeights[2];
+		#endif	
+		#if NUM_BONE_INFLUENCERS > 3
+			influence += mBones[int(matricesIndices[3])] * matricesWeights[3];
+		#endif	
 
-	// 	// return mat4(a, b, c, d);
-	// }
+		#if NUM_BONE_INFLUENCERS > 4
+			influence += mBones[int(matricesIndicesExtra[0])] * matricesWeightsExtra[0];
+		#endif	
+		#if NUM_BONE_INFLUENCERS > 5
+			influence += mBones[int(matricesIndicesExtra[1])] * matricesWeightsExtra[1];
+		#endif	
+		#if NUM_BONE_INFLUENCERS > 6
+			influence += mBones[int(matricesIndicesExtra[2])] * matricesWeightsExtra[2];
+		#endif	
+		#if NUM_BONE_INFLUENCERS > 7
+			influence += mBones[int(matricesIndicesExtra[3])] * matricesWeightsExtra[3];
+		#endif	
+	#endif
 
-	// mat4 influence;
-	// influence = mBones[int(matricesIndices[0])] * matricesWeights[0];
-
-	// #if NUM_BONE_INFLUENCERS > 1
-	// 	influence += mBones[int(matricesIndices[1])] * matricesWeights[1];
-	// #endif	
-	// #if NUM_BONE_INFLUENCERS > 2
-	// 	influence += mBones[int(matricesIndices[2])] * matricesWeights[2];
-	// #endif	
-	// #if NUM_BONE_INFLUENCERS > 3
-	// 	influence += mBones[int(matricesIndices[3])] * matricesWeights[3];
-	// #endif	
-
-	// #if NUM_BONE_INFLUENCERS > 4
-	// 	influence += mBones[int(matricesIndicesExtra[0])] * matricesWeightsExtra[0];
-	// #endif	
-	// #if NUM_BONE_INFLUENCERS > 5
-	// 	influence += mBones[int(matricesIndicesExtra[1])] * matricesWeightsExtra[1];
-	// #endif	
-	// #if NUM_BONE_INFLUENCERS > 6
-	// 	influence += mBones[int(matricesIndicesExtra[2])] * matricesWeightsExtra[2];
-	// #endif	
-	// #if NUM_BONE_INFLUENCERS > 7
-	// 	influence += mBones[int(matricesIndicesExtra[3])] * matricesWeightsExtra[3];
-	// #endif	
-
-	// finalWorld = finalWorld * influence;
+	finalWorld = finalWorld * influence;
 #endif

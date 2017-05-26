@@ -38,20 +38,6 @@ varying vec2 vOpacityUV;
 #ifdef EMISSIVE
 varying vec2 vEmissiveUV;
 uniform sampler2D emissiveSampler;
-// mat4 loadBoneMatrix(float frame, float bone) 
-// {
-// 	frame = max(frame, 1.0);
-// 	frame = min(frame, 33.0);
-// 	int baseU = 4*int(bone);
-// 	int baseV = int(frame)-1;
-
-// 	vec4 a = texelFetch(emissiveSampler, ivec2(baseU, baseV), 0);
-// 	vec4 b = texelFetch(emissiveSampler, ivec2(baseU+1, baseV), 0);
-// 	vec4 c = texelFetch(emissiveSampler, ivec2(baseU+2, baseV), 0);
-// 	vec4 d = texelFetch(emissiveSampler, ivec2(baseU+3, baseV), 0);
-
-// 	return mat4(a, b, c, d);
-// }
 #endif
 
 #ifdef LIGHTMAP
@@ -106,25 +92,6 @@ varying vec3 vDirectionW;
 //     return fract(sin(sn) * c);
 // }
 
-#ifdef INSTANCED_SKINNING
-uniform sampler2D instancedSkinningSampler;
-
-mat4 loadBoneMatrix(float frame, float bone) 
-{
-	frame = max(frame, 1.0);
-	frame = min(frame, 33.0);
-	int baseU = 4*int(bone);
-	int baseV = int(frame)-1;
-
-	vec4 a = texelFetch(instancedSkinningSampler, ivec2(baseU, baseV), 0);
-	vec4 b = texelFetch(instancedSkinningSampler, ivec2(baseU+1, baseV), 0);
-	vec4 c = texelFetch(instancedSkinningSampler, ivec2(baseU+2, baseV), 0);
-	vec4 d = texelFetch(instancedSkinningSampler, ivec2(baseU+3, baseV), 0);
-
-	return mat4(a, b, c, d);
-}
-#endif
-
 void main(void) {
 	vec3 positionUpdated = position;
 #ifdef NORMAL	
@@ -142,18 +109,6 @@ void main(void) {
 
 #include<instancesVertex>
 #include<bonesVertex>
-
-	#ifdef INSTANCED_SKINNING 
-	mat4 influence;
-
-	influence = loadBoneMatrix(animationFrameOffset, matricesIndices[0]) * matricesWeights[0];
-	influence += loadBoneMatrix(animationFrameOffset, matricesIndices[1]) * matricesWeights[1];
-	influence += loadBoneMatrix(animationFrameOffset, matricesIndices[2]) * matricesWeights[2];
-	influence += loadBoneMatrix(animationFrameOffset, matricesIndices[3]) * matricesWeights[3];
-
-	finalWorld = finalWorld * influence;
-	#endif
-
 	gl_Position = viewProjection * finalWorld * vec4(positionUpdated, 1.0);
 
 	vec4 worldPos = finalWorld * vec4(positionUpdated, 1.0);
